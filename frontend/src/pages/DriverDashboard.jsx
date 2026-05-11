@@ -1,4 +1,4 @@
-import { Banknote, CheckCircle2, Gauge, ListChecks } from 'lucide-react';
+import { Banknote, CheckCircle2, Gauge, ListChecks, MapPinned, Route, Star, UserRound } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { api, getSession } from '../api/client';
 import Layout from '../components/Layout.jsx';
@@ -42,9 +42,9 @@ export default function DriverDashboard() {
   return (
     <Layout title="Driver Dashboard" subtitle="Accept requests, complete rides and view earnings.">
       <section className="stats-grid">
-        <StatCard label="Available" value={driver?.available ? 'Yes' : 'No'} tone="green" />
-        <StatCard label="Rating" value={driver?.ratingAverage?.toFixed?.(1) || '5.0'} />
-        <StatCard label="Earnings" value={`Rs ${earnings.toFixed(0)}`} tone="rose" />
+        <StatCard label="Available" value={driver?.available ? 'Online' : 'Busy'} tone="badge" icon={CheckCircle2} />
+        <StatCard label="Rating" value={driver?.ratingAverage?.toFixed?.(1) || '5.0'} tone="highlight" icon={Star} meta="Average score" />
+        <StatCard label="Earnings" value={`Rs ${earnings.toFixed(0)}`} tone="accent" icon={Banknote} meta={`${completed.length} completed trips`} />
       </section>
 
       <section className="workspace-grid">
@@ -64,6 +64,7 @@ export default function DriverDashboard() {
           </div>
         </div>
         <TripMap
+          label="Live Driver Location"
           pickup={activeTrip ? { lat: activeTrip.pickupLat, lng: activeTrip.pickupLng } : null}
           dropoff={activeTrip ? { lat: activeTrip.dropoffLat, lng: activeTrip.dropoffLng } : null}
           driver={driver ? { lat: driver.currentLat, lng: driver.currentLng } : null}
@@ -74,14 +75,16 @@ export default function DriverDashboard() {
         <div className="panel-title"><Gauge size={19} /><h2>Assigned trips</h2></div>
         <div className="table-wrap">
           <table>
-            <thead><tr><th>ID</th><th>Rider</th><th>Route</th><th>Fare</th><th>Status</th><th>Action</th></tr></thead>
+            <thead><tr><th>ID</th><th>Rider</th><th>Route</th><th className="align-right">Fare</th><th>Status</th><th>Action</th></tr></thead>
             <tbody>
               {trips.map((trip) => (
                 <tr key={trip.id}>
                   <td>#{trip.id}</td>
-                  <td>{trip.rider?.name}</td>
-                  <td>{trip.pickupAddress} to {trip.dropoffAddress}</td>
-                  <td>Rs {trip.fare?.toFixed(0)}</td>
+                  <td><span className="cell-with-icon"><UserRound size={16} /> {trip.rider?.name}</span></td>
+                  <td>
+                    <span className="route-cell"><Route size={16} /> <span>{trip.pickupAddress}<small>{trip.dropoffAddress}</small></span></span>
+                  </td>
+                  <td className="fare-cell">Rs {trip.fare?.toFixed(0)}</td>
                   <td><span className={`pill ${trip.status.toLowerCase()}`}>{trip.status}</span></td>
                   <td>{trip.status === 'ACCEPTED' && <button className="ghost-button table-button" onClick={() => complete(trip.id)}><CheckCircle2 size={16} /> Complete</button>}</td>
                 </tr>
@@ -92,7 +95,7 @@ export default function DriverDashboard() {
       </section>
 
       <section className="panel compact-panel">
-        <div className="panel-title"><Banknote size={19} /><h2>Earnings dashboard</h2></div>
+        <div className="panel-title"><MapPinned size={19} /><h2>Earnings dashboard</h2></div>
         <p className="earnings-line">Completed trips: <b>{completed.length}</b> • Total earnings: <b>Rs {earnings.toFixed(0)}</b></p>
       </section>
     </Layout>

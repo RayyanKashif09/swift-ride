@@ -1,14 +1,14 @@
 import L from 'leaflet';
 import { useEffect, useRef } from 'react';
 
-const icon = new L.Icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
+const icon = new L.DivIcon({
+  className: 'map-pin',
+  html: '<span></span>',
+  iconSize: [26, 34],
+  iconAnchor: [13, 34],
 });
 
-export default function TripMap({ pickup, dropoff, driver }) {
+export default function TripMap({ pickup, dropoff, driver, label = 'Live Driver Location' }) {
   const mapRef = useRef(null);
   const nodeRef = useRef(null);
   const overlayRef = useRef(null);
@@ -41,15 +41,23 @@ export default function TripMap({ pickup, dropoff, driver }) {
     if (driver) {
       const point = [driver.lat, driver.lng];
       points.push(point);
-      L.circleMarker(point, { radius: 9, color: '#0f766e', fillColor: '#14b8a6', fillOpacity: 0.9 })
+      L.circleMarker(point, { radius: 9, color: '#050505', fillColor: '#050505', fillOpacity: 0.9 })
         .addTo(overlay)
         .bindPopup('Driver');
     }
     if (points.length > 1) {
-      L.polyline(points, { color: '#e11d48', weight: 4 }).addTo(overlay);
+      L.polyline(points, { color: '#050505', weight: 4 }).addTo(overlay);
       map.fitBounds(points, { padding: [35, 35] });
     }
   }, [pickup, dropoff, driver]);
 
-  return <div className="map-panel" ref={nodeRef} />;
+  return (
+    <div className="map-panel">
+      <div className="map-label">
+        <b>{label}</b>
+        <span>{driver ? 'Driver signal active' : 'Route preview'}</span>
+      </div>
+      <div className="map-canvas" ref={nodeRef} />
+    </div>
+  );
 }
