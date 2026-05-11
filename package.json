@@ -1,0 +1,15 @@
+{
+  "name": "swiftride",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "postinstall": "npm --prefix frontend install",
+    "dev": "concurrently -k -n BACKEND,FRONTEND -c blue,green \"npm run backend\" \"npm run frontend\"",
+    "backend": "cd backend && mvn spring-boot:run",
+    "frontend": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
