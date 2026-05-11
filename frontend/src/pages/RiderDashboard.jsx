@@ -1,4 +1,4 @@
-import { Navigation, RefreshCcw, Star } from 'lucide-react';
+import { Banknote, CheckCircle2, Navigation, RefreshCcw, Route, Star, UserRound } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { api, getSession } from '../api/client';
 import Layout from '../components/Layout.jsx';
@@ -47,9 +47,9 @@ export default function RiderDashboard() {
   return (
     <Layout title="Rider Dashboard" subtitle="Book rides, track the route and rate completed trips.">
       <section className="stats-grid">
-        <StatCard label="My Trips" value={trips.length} />
-        <StatCard label="Completed" value={completed.length} tone="green" />
-        <StatCard label="Last Fare" value={`Rs ${latest?.fare?.toFixed?.(0) || 0}`} tone="rose" />
+        <StatCard label="My Trips" value={trips.length} icon={Route} />
+        <StatCard label="Completed" value={completed.length} tone="highlight" icon={CheckCircle2} />
+        <StatCard label="Last Fare" value={`Rs ${latest?.fare?.toFixed?.(0) || 0}`} tone="accent" icon={Banknote} />
       </section>
 
       <section className="workspace-grid">
@@ -67,6 +67,7 @@ export default function RiderDashboard() {
           </form>
         </div>
         <TripMap
+          label="Current Route"
           pickup={{ lat: form.pickupLat, lng: form.pickupLng }}
           dropoff={{ lat: form.dropoffLat, lng: form.dropoffLng }}
           driver={latest?.driver ? { lat: latest.driver.currentLat, lng: latest.driver.currentLng } : null}
@@ -77,14 +78,14 @@ export default function RiderDashboard() {
         <div className="panel-title"><RefreshCcw size={19} /><h2>My trips</h2></div>
         <div className="table-wrap">
           <table>
-            <thead><tr><th>ID</th><th>Route</th><th>Driver</th><th>Fare</th><th>Status</th></tr></thead>
+            <thead><tr><th>ID</th><th>Route</th><th>Driver</th><th className="align-right">Fare</th><th>Status</th></tr></thead>
             <tbody>
               {trips.map((trip) => (
                 <tr key={trip.id}>
                   <td>#{trip.id}</td>
-                  <td>{trip.pickupAddress} to {trip.dropoffAddress}</td>
-                  <td>{trip.driver?.user?.name || 'Waiting'}</td>
-                  <td>Rs {trip.fare?.toFixed(0)}</td>
+                  <td><span className="route-cell"><Route size={16} /> <span>{trip.pickupAddress}<small>{trip.dropoffAddress}</small></span></span></td>
+                  <td><span className="cell-with-icon"><UserRound size={16} /> {trip.driver?.user?.name || 'Waiting'}</span></td>
+                  <td className="fare-cell">Rs {trip.fare?.toFixed(0)}</td>
                   <td><span className={`pill ${trip.status.toLowerCase()}`}>{trip.status}</span></td>
                 </tr>
               ))}

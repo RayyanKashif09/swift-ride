@@ -1,4 +1,4 @@
-import { BarChart3, Car, SlidersHorizontal } from 'lucide-react';
+import { BarChart3, Car, DollarSign, Route, SlidersHorizontal, UsersRound } from 'lucide-react';
 import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, LinearScale, Tooltip } from 'chart.js';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import { useEffect, useState } from 'react';
@@ -39,10 +39,10 @@ export default function AdminDashboard() {
   return (
     <Layout title="Admin Dashboard" subtitle="Manage drivers, fares and platform reports.">
       <section className="stats-grid">
-        <StatCard label="Users" value={report.users || 0} />
-        <StatCard label="Drivers" value={report.drivers || 0} tone="green" />
-        <StatCard label="Revenue" value={`Rs ${(report.revenue || 0).toFixed?.(0) || 0}`} tone="rose" />
-        <StatCard label="Trips" value={report.trips || 0} />
+        <StatCard label="Users" value={report.users || 0} icon={UsersRound} />
+        <StatCard label="Drivers" value={report.drivers || 0} tone="highlight" icon={Car} />
+        <StatCard label="Revenue" value={`Rs ${(report.revenue || 0).toFixed?.(0) || 0}`} tone="accent" icon={DollarSign} />
+        <StatCard label="Trips" value={report.trips || 0} icon={Route} />
       </section>
 
       <section className="chart-grid">
@@ -51,7 +51,7 @@ export default function AdminDashboard() {
           <Bar
             data={{
               labels: ['Requested', 'Completed'],
-              datasets: [{ data: [report.requestedTrips || 0, report.completedTrips || 0], backgroundColor: ['#f97316', '#0f766e'] }],
+              datasets: [{ data: [report.requestedTrips || 0, report.completedTrips || 0], backgroundColor: ['#050505', '#b8b8b8'] }],
             }}
             options={{ responsive: true, plugins: { legend: { display: false } } }}
           />
@@ -61,7 +61,7 @@ export default function AdminDashboard() {
           <Doughnut
             data={{
               labels: ['Revenue', 'Open demand'],
-              datasets: [{ data: [report.revenue || 1, (report.requestedTrips || 0) * 250 + 1], backgroundColor: ['#e11d48', '#1f2937'] }],
+              datasets: [{ data: [report.revenue || 1, (report.requestedTrips || 0) * 250 + 1], backgroundColor: ['#050505', '#d8d8d8'] }],
             }}
           />
         </div>
